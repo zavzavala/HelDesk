@@ -8,17 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class chamado extends Model
 {
     use HasFactory;
-
+    public $timestamps = false;
     protected $table ='chamados';
-    protected $fillable=['id','id_user','nome','tipo','status','data','problema'];
+    protected $fillable=['id','id_user','departamento','nome','tipo','status','data','problema', 'observacao'];
 
 
-     /* public function user(){
-        return $this->hasMany(User::class);
-    }*/
+  public function user(){
+        return $this->belongsTo(User::class, 'id_user');
+       //return $this->belongsTo(User::class);
+    }
+    /*
   public function user()
     {
-        return $this->hasMany('App\Models\User', 'id', 'id_user');
+        return $this->belongsTo('App\Models\User', 'id_user');
         //return $this->hasOne('App\Models\User', 'ChavePrimaria', 'chaveLocal');
-    }
+    }*/
 }

@@ -8,6 +8,7 @@ use App\Models\chamado;
 use App\Models\User;
 use App\Models\ModelCalendario;
 use DB;
+use DataTables;
 
 class UserController extends Controller
 {
@@ -45,41 +46,7 @@ class UserController extends Controller
 
        return view('dashboards.users.calendar', compact('result'));
    }
-    // GET ALL USERS
-    public function getUsers(){
-        $users = User::all();
-      
-       
-           return DataTables::of($users)
-                               ->addIndexColumn()
-                               ->addColumn('acoes', function($row){
-                                   return '<div class="btn-group">
-                                              
-                                               <button class="btn btn-sm btn-danger" data-id="'.$row['id'].'" id="removeUser">Eliminar</button>
-                                           </div>';
-                               });
-                               
-                          // ->make(true);
-                           //dd($users);
-   }
-
-   //GET CHAMADOS DETAILS
-   public function getUserDetails(Request $request){
-    $user_id = $request->user_id;
-    $chamadoDetails = chamado::find($user_id);
-    return response()->json(['details'=>$chamadoDetails]);
-}
-    // DELETE USERS RECORD
-    public function deleteUser(Request $request){
-        $user_id = $request->user_id;
-        $query = User::find($user_id)->delete();
-
-        if($query){
-            return response()->json(['code'=>1, 'msg'=>'Usuario Eliminado com sucesso']);
-        }else{
-            return response()->json(['code'=>0, 'msg'=>'Algo deu errado.']);
-        }
-    }
+    
    function updateInfo(Request $request){
            
     $validator = \Validator::make($request->all(),[

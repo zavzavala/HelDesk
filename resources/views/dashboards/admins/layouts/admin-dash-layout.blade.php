@@ -15,7 +15,7 @@
       //////POR DEPARTAMENTO
       function drawChart() {
           var data = google.visualization.arrayToDataTable([
-            ['Language', 'Speakers (in millions)'],
+            ['Chamado', 'Departamento'],
           
             <?php echo $chartData;?>
           ]);
@@ -180,7 +180,7 @@ google.charts.load("current", {packages:["corechart"]});
             @foreach($chamados as $chamado)
             <a href="#" class="dropdown-item">
             <div class="dropdown-divider"></div>
-              <span class="dropdown-item dropdown-header">{{$chamado->nome}}</span>
+              <span class="dropdown-item dropdown-header">{{$chamado->nome}},{{$chamado->departamento}}</span>
               
               
                 <i class="fas fa-envelope mr-2"></i> {{$chamado->problema}}
@@ -320,18 +320,22 @@ google.charts.load("current", {packages:["corechart"]});
                   <i class="nav-icon fas fa-calendar-alt"></i>
                   <p>
                     Calendario
-                    <span class="badge badge-info right">2</span>
+                    <span class="badge badge-info right"></span>
                   </p>
                 </a>
               </li>
+              @if(Auth::user()->email == 'admin@gmail.com')
               <li class="nav-item">
-                <a href="{{ route('admin.settings')}}" class="nav-link {{ (request()->is('admin/settings*') ? 'active' : '' )}}">
+                <a href="{{ route('master.settings')}}" class="nav-link {{ (request()->is('master/settings*') ? 'active' : '' )}}">
                   <i class="nav-icon fas fa-cog"></i>
                   <p>
                   Definicoes
                   </p>
                 </a>
               </li>
+              @else()
+
+              @endif
             </ul>
           </nav>
           <!-- /.sidebar-menu -->
@@ -344,6 +348,7 @@ google.charts.load("current", {packages:["corechart"]});
       @yield('content')
       @include('dashboards.admins.resolve-chamado')
       @include('dashboards.admins.desfazer')
+      @include('dashboards.admins.permissoes')
       </div>
       <!-- /.content-wrapper -->
 
@@ -355,12 +360,9 @@ google.charts.load("current", {packages:["corechart"]});
 
       <!-- Main Footer -->
       <footer class="main-footer">
-        <!-- To the right -->
-        <div class="float-right d-none d-sm-inline">
-          Anything you want
-        </div>
+        
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2021-2021</strong> Todos direitos reservados.
+        <strong>Copyright &copy; 2021-{{ date('y/m/d') }} Todos direitos reservados.
       </footer>
     </div>
     <!-- ./wrapper -->
@@ -402,7 +404,7 @@ google.charts.load("current", {packages:["corechart"]});
     <script src="{{ asset('plugins/fullcalendar/main.js')}}"></script>
     <!--<script src="{{ asset('js/grafico.js')}}"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <!--<script src="{{url('http://code.highcharts.com/highcharts.js')}}"></script>-->
+    <!-<script src="{{url('http://code.highcharts.com/highcharts.js')}}"></script>-->
     <script src="{{ asset('js/calendario.js')}}"></script>
   <!-- <script src="{{url('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js')}}"></script>
     <script src="{{url('http://code.highcharts.com/highcharts.js')}}"></script>
@@ -435,12 +437,12 @@ google.charts.load("current", {packages:["corechart"]});
           {data:'tipo', name:'tipo'},
           {data:'problema', name:'problema'},
           {data:'data', name:'data'},
+          //{data:'data_resolucao', name:'data_resolucao'}
           {data:'acoes', name:'acoes', orderable:false, searchable:false},
       ]
     });
 //////////////////////USUARIO
 //GET ALL USERS 
-    
 $('#usuarios').DataTable({
       processing:true,
       info:true,
@@ -448,25 +450,26 @@ $('#usuarios').DataTable({
       "pageLength":5,
       "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"Todos"]],
       columns:[
-          //  {data:'id', name:'id'},
           
-          {data:'DT_RowIndex', name:'DT_RowIndex'},
-          //{data:'picture', name:'picture'},
+          //{data:'DT_RowIndex', name:'DT_RowIndex'},
+          {data:'id', name:'id'},
           {data:'name', name:'nome'},
           {data:'email', name:'email'},
           {data:'departamento', name:'departamento'},
+          {data:'role', name:'role'},
           {data:'acoes', name:'acoes', orderable:false, searchable:false},
       ]
     });
 
- //DELETE CHAMADO RECORD
+ //DELETE USUARIOS
  $(document).on('click','#removeUser', function(){
       var user_id = $(this).data('id');
+      var nome = $(this).data('name');
       var url = '<?= route("delete.user") ?>';
 
       swal.fire({
-          title:'Muita Atencao',
-          html:'Quer <b>eliminar</b> este Usuario?',
+          title:'Muita Atencao!',
+          html:'Deseja <b>eliminar</b> este Usuario?',
           showCancelButton:true,
           showCloseButton:true,
           cancelButtonText:'Cancelar',
@@ -490,7 +493,8 @@ $('#usuarios').DataTable({
 
     });
 
-///////////////////////////delete usuarios
+///////////////////////////FIM delete usuarios
+
     //RESOLVER CHAMADOS DETAILS-----ESTES E O FORMULARIO
     $('#resolve').on('submit', function(e){
       e.preventDefault();
@@ -512,6 +516,7 @@ $('#usuarios').DataTable({
                         $(form).find('span.'+prefix+'_error').text(val[0]);
                     });
                 }else{
+                  $('#chamados').DataTable().ajax.reload(null, false);
                     $('#chamado-pendente').DataTable().ajax.reload(null, false);
                     $('.ResolveChamado').modal('hide');
                     $('.ResolveChamado').find('form')[0].reset();
@@ -528,11 +533,11 @@ $('#usuarios').DataTable({
       "pageLength":5,
       "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"Todos"]],
       columns:[
-          //  {data:'id', name:'id'},
+          {data:'id_Rchamados', name:'id_Rchamados'},
           {data:'checkbox', name:'checkbox', orderable:false, searchable:false},
-          {data:'DT_RowIndex', name:'DT_RowIndex'},
+         // {data:'DT_RowIndex', name:'DT_RowIndex'},
           {data:'nome', name:'nome'},
-          
+          {data:'departamento',name:'departamento'},
           {data:'tipo', name:'tipo'},
           {data:'problema', name:'problema'},
           {data:'data', name:'data'},
@@ -547,7 +552,10 @@ $('#usuarios').DataTable({
       $.post('<?= route("get.resolver.details") ?>',{chamado_id:chamado_id}, function(data){
           //  alert(data.details.nome);
           $('.ResolveChamado').find('input[name="chamaid"]').val(data.details.id);
+          //$('.ResolveChamado').find('input[name="userID"]').val(data.details.userID);
+         // $('.ResolveChamado').find('input[name="userName"]').val(data.details.userName);
           $('.ResolveChamado').find('input[name="status"]');
+          $('.ResolveChamado').find('textarea[name="observacao"]').val(data.details.observacao);
 
           $('.ResolveChamado').modal('show');
       
@@ -591,14 +599,15 @@ $('#usuarios').DataTable({
       "pageLength":5,
       "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"Todos"]],
       columns:[
-          //  {data:'id', name:'id'},
+           {data:'id_Rchamados', name:'id_Rchamados'},
           //{data:'checkbox', name:'checkbox', orderable:false, searchable:false},
-          {data:'DT_RowIndex', name:'DT_RowIndex'},
+          //{data:'DT_RowIndex', name:'DT_RowIndex'},
           {data:'nome', name:'nome'},
-          
+          {data:'departamento', name:'departamento'},
           {data:'tipo', name:'tipo'},
           {data:'problema', name:'problema'},
           {data:'data', name:'data'},
+          //{data:'data_resolucao', name:'data_resolucao'},
           {data:'acoes', name:'acoes', orderable:false, searchable:false},
       ]
     });
@@ -619,11 +628,11 @@ $('#usuarios').DataTable({
     //DELETE CHAMADO RECORD
     $(document).on('click','#deleteChamadoBtn', function(){
       var chamado_id = $(this).data('id');
-      var url = '<?= route("delete.chamado") ?>';
+      var url = '<?= route("Admindelete.chamado") ?>';
 
       swal.fire({
           title:'Muita Atencao',
-          html:'Quer <b>eliminar</b> este chamado?',
+          html:'Deseja <b>eliminar</b> este chamado?',
           showCancelButton:true,
           showCloseButton:true,
           cancelButtonText:'Cancelar',
@@ -636,7 +645,7 @@ $('#usuarios').DataTable({
             if(result.value){
                 $.post(url,{chamado_id:chamado_id}, function(data){
                     if(data.code == 1){
-                        $('#chamado').DataTable().ajax.reload(null, false);
+                        $('#chamados').DataTable().ajax.reload(null, false);
                         toastr.success(data.msg);
                     }else{
                         toastr.error(data.msg);
@@ -683,7 +692,7 @@ $('#usuarios').DataTable({
                   $('input[name="chamado_checkbox"]:checked').each(function(){
                     checkedChamados.push($(this).data('id'));
                   });
-                  var url = '{{ route("delete.selected.chamados") }}';
+                  var url = '{{ route("Admindelete.selected.chamados") }}';
                   if(checkedChamados.length > 0){
                       swal.fire({
                           title:'Muita Atencao!',
@@ -709,8 +718,170 @@ $('#usuarios').DataTable({
                   }
               });
           
-        /* UPDATE ADMIN PERSONAL INFO */
+        /* UPDATE ADMIN PERSONAL PERMISSOES */
+        $(document).on('click','#permissoes', function(){
+      var admin_id = $(this).data('id');
+      $('.Admin').find('form')[0].reset();
+      $('.Admin').find('span.error-text').text('');
+      $.post('<?= route("get.adminPermissoes.details") ?>',{admin_id:admin_id}, function(data){
+          
+          $('.Admin').find('input[name="id_user"]').val(data.details.id);
+          $('.Admin').find('input[name="role"]').val(data.details.role);
+          
+          $('.Admin').modal('show');
+      
+      },'json');
+    });
 
+//ATRIBUI PERMISSOES ==>> Este e o formulario$('#alteraUSER').on('submit', function(e)
+$('#alteraUSER').on('submit', function(e){
+      e.preventDefault();
+      var form = this;
+      $.ajax({
+          url:$(form).attr('action'),
+          method:$(form).attr('method'),
+          data:new FormData(form),
+          processData:false,
+          dataType:'json',
+          contentType:false,
+          beforeSend: function(){
+              $(form).find('span.error-text').text('');
+          },
+          success: function(data){
+                if(data.code == 0){
+                    $.each(data.error, function(prefix, val){
+                        $(form).find('span.'+prefix+'_error').text(val[0]);
+                    });
+                }else{
+                    $('#usuarios').DataTable().ajax.reload(null, false);
+                    $('.Admin').modal('hide');
+                    $('.Admin').find('form')[0].reset();
+                    toastr.success(data.msg);
+                }
+          }
+      });
+    });
+    
+
+    /*Historicos*/
+
+    //GET ALL Historicos
+    $('#historico_admin').DataTable({
+      processing:true,
+      info:true,
+      ajax:"{{ route('get.historico.list') }}",
+      "pageLength":5,
+      "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"Todos"]],
+      columns:[
+          //  {data:'id', name:'id'},
+          {data:'checkbox', name:'checkbox', orderable:false, searchable:false},
+         // {data:'DT_RowIndex', name:'DT_RowIndex'},
+          {data:'id_chamado', name:'id_chamado'},
+          {data:'id_usuario', name:'id_usuario'},
+          {data:'Id_admin', name:'Id_admin'},
+          {data:'tecnico', name:'tecnico'},
+          {data:'departamento', name:'departamento'},
+          {data:'status', name:'status'},
+          {data:'data_chamado', name:'data_chamado'},
+          {data:'data_resolucao', name:'data_resolucao'},
+         
+          {data:'acoes', name:'acoes', orderable:false, searchable:false},
+      ]
+    });
+
+
+    //DELETE HISTORICOS
+    $(document).on('click','#deleteHistoricoBtn', function(){
+      var id_historico = $(this).data('id');
+      var url = '<?= route("delete.historico") ?>';
+
+      swal.fire({
+          title:'Muita Atencao',
+          html:'Deseja <b>eliminar</b> este registo?',
+          showCancelButton:true,
+          showCloseButton:true,
+          cancelButtonText:'Cancelar',
+          confirmButtonText:'Sim, Eliminar',
+          cancelButtonColor:'#d33',
+          confirmButtonColor:'#556ee6',
+          width:300,
+          allowOutsideClick:false
+      }).then(function(result){
+            if(result.value){
+                $.post(url,{id_historico:id_historico}, function(data){
+                    if(data.code == 1){
+                        $('#historico_admin').DataTable().ajax.reload(null, false);
+                        toastr.success(data.msg);
+                    }else{
+                        toastr.error(data.msg);
+                    }
+                },'json');
+            }
+      });
+
+    });
+    /*APAGA TODS HISTORICOS */
+    //APAGAR MULTIPLOS
+
+$(document).on('click','input[name="main_checkbox"]', function(){
+                  if(this.checked){
+                    $('input[name="chamado_checkbox"]').each(function(){
+                        this.checked = true;
+                    });
+                  }else{
+                     $('input[name="chamado_checkbox"]').each(function(){
+                         this.checked = false;
+                     });
+                  }
+                  toggledeleteTodosBtn();
+           });
+           $(document).on('change','input[name="chamado_checkbox"]', function(){
+               if( $('input[name="chamado_checkbox"]').length == $('input[name="chamado_checkbox"]:checked').length ){
+                   $('input[name="main_checkbox"]').prop('checked', true);
+               }else{
+                   $('input[name="main_checkbox"]').prop('checked', false);
+               }
+               toggledeleteTodosBtn();
+           });
+           function toggledeleteTodosBtn(){
+               if( $('input[name="chamado_checkbox"]:checked').length > 0 ){
+                   $('button#deleteTodosBtn').text('Delete ('+$('input[name="chamado_checkbox"]:checked').length+')').removeClass('d-none');
+               }else{
+                   $('button#deleteTodosBtn').addClass('d-none');
+               }
+           }
+           $(document).on('click','button#deleteTodosBtn', function(){
+               var checkedHistorico = [];
+               $('input[name="chamado_checkbox"]:checked').each(function(){
+                checkedHistorico.push($(this).data('id'));
+               });
+                  
+                  var url = '{{ route("historico.selected.delete") }}';
+                  if(checkedHistorico.length > 0){
+                      swal.fire({
+                          title:'Muita Atencao!',
+                          html:'Quer eliminar este(s) <b>('+checkedHistorico.length+')</b> registos(s)?',
+                          showCancelButton:true,
+                          showCloseButton:true,
+                          confirmButtonText:'Sim, Eliminar',
+                          cancelButtonText:'Cancelar',
+                          confirmButtonColor:'#556ee6',
+                          cancelButtonColor:'#d33',
+                          width:300,
+                          allowOutsideClick:false
+                      }).then(function(result){
+                          if(result.value){
+                              $.post(url,{historico_ids:checkedHistorico},function(data){
+                                  if(data.code == 1){
+                                      $('#historico_admin').DataTable().ajax.reload(null, true);
+                                      toastr.success(data.msg);
+                                  }
+                              },'json');
+                          }
+                      })
+                  }
+              });
+    /* UPDATE ADMIN PERSONAL INFO */
         $('#AdminInfoForm').on('submit', function(e){
             e.preventDefault();
 

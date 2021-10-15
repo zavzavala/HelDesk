@@ -31,10 +31,12 @@
                   <tr>
                  
                                     <th>#</th>
-                                    <th>Nome</th>    
+                                    <th>Usuario</th>  
+                                    <th>Departamento</th>  
                                     <th>Tipo</th>
                                     <th>Problema</th>
                                     <th>Data</th>
+                                    
                                     <th>Acoes <button class="btn btn-sm btn-danger d-none" id="resolveTodosBtn"></button></th>
                                
                   </tr>

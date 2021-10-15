@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class chamados extends Migration
+class CreateHistoricoModelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class chamados extends Migration
      */
     public function up()
     {
-        Schema::create('chamados', function (Blueprint $table) {
+        Schema::create('historico', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_user');
-            $table->foreign('id_user')->references('id')->on('users')->OnDelete('cascade')->OnUpdate('cascade');
+            $table->integer('id_usuario');
+            $table->integer('id_chamado');
+            $table->integer('id_admin');
             $table->string('departamento');
             $table->string('status');
-            $table->datetime('data');
-            $table->string('nome');
-            $table->string('tipo');
-            $table->string('problema');
-            //$table->string('observacao');
+            $table->string('tecnico');
+            $table->datetime('data_chamado');
+            $table->datetime('data_resolucao');
             $table->timestamps();
         });
     }
@@ -35,6 +34,6 @@ class chamados extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('chamados');
+        Schema::dropIfExists('historico__models');
     }
 }

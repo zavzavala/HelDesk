@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\chamado;
- use DataTables;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Chamado;
+use App\Models\resolve_chamados;
+use App\Models\User;
 use DB;
 use Carbon\Carbon;
-    //use App\Models\user;
+
+ use DataTables;
+use Illuminate\Support\Facades\Auth;
+
 
     class ChamadoController extends Controller
     {
@@ -22,7 +25,7 @@ use Carbon\Carbon;
             return view('index');
         }
 
-        //ADD NEW COUNTRY
+        //ADD NEW CHAMADO
         public function addChamado(Request $request){
             $validator = \Validator::make($request->all(),[
                 'nome'=>'required',
@@ -30,11 +33,15 @@ use Carbon\Carbon;
                 'status'=>'required',
                 'data'=>'required',
                 'tipo'=>'required',
-                //'tipo'=>['required', 'string','Clique para seleciona'],
+                'departamento'=>'required',
                 'problema'=>'required',
-               
-                
-                
+                //'observacao'=>'required',
+            ],
+            [
+
+            'problema.required'=>'Este Campo e Obrigatorio',        
+            'tipo.required'=>'Este Campo e Obrigatorio',
+  
             ]);
                 
 
@@ -42,12 +49,14 @@ use Carbon\Carbon;
                 return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
             }else{
                 $chamado = new chamado();
-                $chamado->nome = $request->nome;
                 $chamado->id_user = $request->id_user;
+                $chamado->nome = $request->nome;
                 $chamado->tipo = $request->tipo;
+                $chamado->departamento = $request->departamento;
                 $chamado->status = $request->status;
                 $chamado->data = $request->data;
                 $chamado->problema = $request->problema;
+                //$chamado->observacao = $request->observacao;
                 
                 $query = $chamado->save();
 
@@ -64,12 +73,13 @@ use Carbon\Carbon;
             
             $id = Auth::id();
             
-            $chamados = chamado::where([ ['status','pendente'],['id_user',$id] ]);
+         $chamados = chamado::where([ ['status','pendente'],['id_user',$id] ]);
+          
             return DataTables::of($chamados)
                                 ->addIndexColumn()
                                 ->addColumn('acoes', function($row){
                                     return '<div class="btn-group">
-                                                    <button class="btn btn-sm btn-primary" data-id="'.$row['id'].'" id="editChamadoBtn">Atualizar</button>
+                                                   <button class="btn btn-sm btn-primary" data-id="'.$row['id'].'" id="editChamadoBtn">Atualizar</button>
                                                     <button class="btn btn-sm btn-danger" data-id="'.$row['id'].'" id="deleteChamadoBtn">Cancelar</button>
                                             </div>';
                                 })
@@ -84,18 +94,21 @@ use Carbon\Carbon;
 
         // GET ALL CHAMADOS FOR TABLE
         public function getAdminChamadosList(){
-         $chamados = chamado::all();
-       // $chamados=DB::select(DB::raw("Select chamados.nome,chamados.tipo,chamados.problema,chamados.tipo,chamados.data,users.departamento 
-        //FROM 'chamados' ,'users' WHERE chamados.id_user=users.id"));
-        // dd($chamados);
+          //$chamados=chamado::with('user');
+         $chamados = resolve_chamados::all();
+//$chamados=DB::select(DB::raw("select nome, departamento, tipo, problema, STATUS, data from chamados inner join users on chamados.id_user=users.id"));
+//$chamados=DB::select(DB::raw("select * from chamados"));
+    
+       
         
-            return DataTables::of($chamados)
+            return DataTables::of($chamados, true)
                                 ->addIndexColumn()
                                 ->addColumn('acoes', function($row){
                                     return '<div class="btn-group">
-                                                <button class="btn btn-sm btn-success" data-id="'.$row['id'].'" id="resolveBtn">'.$row['status'].'</button>
-                                                <button class="btn btn-sm btn-danger" data-id="'.$row['id'].'" id="deleteChamadoBtn">Eliminar</button>
-                                            </div>';
+                                         <button class="btn btn-sm btn-success" data-id="'.$row['id'].'" id="resolveBtn">'.$row['status'].'</button>
+                                         <button class="btn btn-sm btn-danger" data-id="'.$row['id'].'" id="deleteChamadoBtn">Eliminar</button>
+                                          
+                                  </div>';
                                 })
                                 ->addColumn('checkbox', function($row){
                                 return '<input type="checkbox" name="chamado_checkbox" data-id="'.$row['id'].'"><label></label>';
@@ -107,9 +120,10 @@ use Carbon\Carbon;
 
     // GET ALL CHAMADOS FOR TABLE PENDENTES
     public function getAdminChamadosListPendentes(){
-        $chamados = chamado::where(['status'=>'pendente']);
-        //$chamados=chamado::with('User')->get();
-        // $users = user::all();
+        $chamados = resolve_chamados::where(['status'=>'pendente']);
+       
+      // $chamados=DB::select(DB::raw("select * from chamados inner join users on users.id=chamados.id_user where chamados.status='pendente'"));
+        
         return DataTables::of($chamados)
                             ->addIndexColumn()
                             ->addColumn('acoes', function($row){
@@ -128,10 +142,12 @@ use Carbon\Carbon;
 
     // GET ALL CHAMADOS FOR TABLE RESOLVIDOS
     public function getAdminChamadosListResolvidos(){
-        $chamados = chamado::where(['status'=>'resolvido']);
+        $chamados = resolve_chamados::where(['status'=>'resolvido']);
         //$departamento =Auth::departamento();
         //$chamados =$chamado->$departamento;
         // $users = user::all();
+        //$chamados=DB::select(DB::raw("select * from chamados inner join users on users.id=chamados.id_user where chamados.status='resolvido'"));
+        
         return DataTables::of($chamados)
                             ->addIndexColumn()
                             ->addColumn('acoes', function($row){
@@ -153,7 +169,7 @@ use Carbon\Carbon;
             return response()->json(['details'=>$chamadoDetails]);
         }
 
-        //UPDATE CHAMADOS DETAILS
+        //UPDATE CHAMADOS DETAILS --USERS
         public function updateChamadoDetails(Request $request){
             $chamado_id = $request->chamaid;
 
@@ -177,14 +193,14 @@ use Carbon\Carbon;
                 $resultado = $chamado->save();
 
                 if($resultado){
-                    return response()->json(['code'=>1, 'msg'=>'Actualizado com sucesso']);
+                    return response()->json(['code'=>1, 'msg'=>'Atualizado com sucesso']);
                 }else{
                     return response()->json(['code'=>0, 'msg'=>'Ocorreu um erro']);
                 }
             }
         }
 
-        // DELETE CHAMADOS RECORD
+        // DELETE CHAMADOS RECORD USERS
         public function deleteChamado(Request $request){
             $chamado_id = $request->chamado_id;
             $query = chamado::find($chamado_id)->delete();
@@ -203,10 +219,27 @@ use Carbon\Carbon;
         }
 
         ///////////////////////////////
+        // DELETE CHAMADOS RECORD ADMIN
+        public function AdmindeleteChamado(Request $request){
+            $chamado_id = $request->chamado_id;
+            $query = resolve_chamados::find($chamado_id)->delete();
+
+            if($query){
+                return response()->json(['code'=>1, 'msg'=>'Eliminado com sucesso']);
+            }else{
+                return response()->json(['code'=>0, 'msg'=>'Algo deu errado.']);
+            }
+        }
+
+        public function AdmindeleteSelectedChamados(Request $request){
+            $chamado_ids = $request->chamados_ids;
+            resolve_chamados::whereIn('id', $chamado_ids)->delete();
+            return response()->json(['code'=>1, 'msg'=>'Chamado(s) selecionado(s) eliminado(s) com sucesso.']); 
+        }
     //GET CHAMADOS RESOLVER DETAILS
     public function getResolverDetails(Request $request){
         $chamado_id = $request->chamado_id;
-        $chamadoDetails = chamado::find($chamado_id);
+        $chamadoDetails = resolve_chamados::find($chamado_id);
         return response()->json(['details'=>$chamadoDetails]);
     }
 
@@ -217,17 +250,26 @@ use Carbon\Carbon;
         $validator = \Validator::make($request->all(),[
         // 'id'=>'unique:chamados, id,' .$chamado_id,
             'status'=>'required:chamados, status,'.$chamado_id,
-        
+            'userID'=>'required',
+            'userName'=>'required',
+            'observacao'=>'max:100',
+        ],
+        [
+            'observacao.max'=>'Texto muito longo. So pode inserir 100 caracteres',
+            //'observacao.min'=>'Texto muito curto. Tem que inserir pelomenos 10 caracteres'
+
         ]);
 
         if(!$validator->passes()){
             return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
         }else{
             
-            $chamado = chamado::find($chamado_id);
-            //$chamado->nome = $request->nome;
-            
+            $chamado = resolve_chamados::find($chamado_id);
+            $chamado->userID = $request->userID;
+            $chamado->userName = $request->userName;
+            $chamado->observacao= $request->observacao;
             $chamado->status = $request->status;
+            
 
             $resultado = $chamado->save();
 
@@ -243,53 +285,26 @@ use Carbon\Carbon;
     //GET TODOS CHAMADOS RESOLVER DETAILS
     public function getSelectedChamadosDetails(Request $request){
         $chamado_id = $request->chamado_id;
-        $chamadoDetails = chamado::find($chamado_id);
+        $chamadoDetails = resolve_chamados::find($chamado_id);
         return response()->json(['details'=>$chamadoDetails]);
     }
 
-    //RESOLVER TODOS CHAMADOS DETAILS
-    public function resolverSelectedChamados(Request $request){
-        $chamado_id = $request->chamaid;
-
-        $validator = \Validator::make($request->all(),[
-        // 'id'=>'unique:chamados, id,' .$chamado_id,
-            'status'=>'required:chamados, status,'.$chamado_id,
-        
-        ]);
-
-        if(!$validator->passes()){
-            return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
-        }else{
-            
-            $chamado = chamado::find($chamado_id);
-            //$chamado->nome = $request->nome;
-            
-            $chamado->status = $request->status;
-
-            $resultado = $chamado->save();
-
-            if($resultado){
-                return response()->json(['code'=>1, 'msg'=>'Todo(s) Chamado(s) Resolvido(s) com sucesso']);
-            }else{
-                return response()->json(['code'=>0, 'msg'=>'Ocorreu um erro']);
-            }
-        }
-    }
 
 
     //GET CHAMADOS DESFAZER CHAMADO DETAILS
     public function getDesfazerDetails(Request $request){
         $chamado_id = $request->chamado_id;
-        $chamadoDetails = chamado::find($chamado_id);
+        $chamadoDetails = resolve_chamados::find($chamado_id);
         return response()->json(['details'=>$chamadoDetails]);
     }
 
-    //UPDATE CHAMADOS DESFAZERR DETAILS
+    //UPDATE CHAMADOS DESFAZERR DETAILS --USER
     public function desfazerChamado(Request $request){
         $chamado_id = $request->chamaid;
 
         $validator = \Validator::make($request->all(),[
-        // 'id'=>'unique:chamados, id,' .$chamado_id,
+            'userID'=>'required',
+            'userName'=>'required',
             'status'=>'required:chamados, status,'.$chamado_id,
         
         ]);
@@ -298,9 +313,9 @@ use Carbon\Carbon;
             return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
         }else{
             
-            $chamado = chamado::find($chamado_id);
-            //$chamado->nome = $request->nome;
-            
+            $chamado = resolve_chamados::find($chamado_id);
+            $chamado->userID = $request->userID;
+            $chamado->userName = $request->userName;
             $chamado->status = $request->status;
 
             $resultado = $chamado->save();

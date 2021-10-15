@@ -20,8 +20,9 @@
                                 <div class="form-group">
                           
                                     <input hidden type="text" class="form-control" value="{{Auth::user()->id}}" name="id_user">
-                                    <span class="text-danger error-text nome_error"></span>
+                                    
                                 </div>
+                                
                                 <div class="form-group">
                                     
                                     <input hidden type="text" class="form-control" value="{{Auth::user()->departamento }}" name="departamento">

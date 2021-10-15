@@ -12,6 +12,8 @@
                  <form action="<?= route('desfazer.chamado.details') ?>" method="POST" id="desfazer">
                     @csrf
                      <input type="hidden" name="chamaid">
+                     <input type="hidden" name="userID" value="{{Auth::user()->id}}">
+                     <input type="hidden" name="userName" value="{{Auth::user()->name}}">
                                 <div class="form-group">
                                 
                                     <input type="hidden" class="form-control" value="pendente" name="status">

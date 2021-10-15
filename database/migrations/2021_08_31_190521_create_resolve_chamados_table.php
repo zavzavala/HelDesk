@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class chamados extends Migration
+class CreateResolveChamadosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,21 @@ class chamados extends Migration
      */
     public function up()
     {
-        Schema::create('chamados', function (Blueprint $table) {
+        Schema::create('resolve_chamados', function (Blueprint $table) {
             $table->id();
+            $table->integer('id_Rchamados');
             $table->unsignedBigInteger('id_user');
             $table->foreign('id_user')->references('id')->on('users')->OnDelete('cascade')->OnUpdate('cascade');
+            $table->integer('userID');
+            $table->string('userName');
             $table->string('departamento');
             $table->string('status');
             $table->datetime('data');
+           // $table->datetime('data_resolucao');
             $table->string('nome');
             $table->string('tipo');
             $table->string('problema');
-            //$table->string('observacao');
+            $table->string('observacao')->nullable();
             $table->timestamps();
         });
     }
@@ -35,6 +39,6 @@ class chamados extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('chamados');
+        Schema::dropIfExists('resolve_chamados');
     }
 }

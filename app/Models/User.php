@@ -53,11 +53,12 @@ class User extends Authenticatable
             return asset('users/images/no-image.png');
         }
     }
- /*public function chamado(){
-    return $this->hasMany(chamado::class);
-}*/
-   public function chamado()
-    {
-        return $this->hasMany('App\Models\chamado', 'id_user');
+    
+    public function chamado(){
+    return $this->hasMany(chamado::class, 'id_user', 'id');
     }
+  /* public function RelChamado()
+    {
+        return $this->hasOne('App\Models\chamado', 'id_user', 'id');
+    }*/
 }

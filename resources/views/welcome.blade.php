@@ -28,12 +28,13 @@
                         {{-- <a href="{{ url('/home') }}" class="text-sm text-gray-700 underline">Pagina inicial</a> --}}
 
                         @if ( Auth::user()->role == 1)
-                            <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-700 underline">Pagina inicial</a>
+                            <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-700 underline">Entrar</a>
                                                  
                         @endif
+                       
 
                         @if ( Auth::user()->role == 2)
-                            <a href="{{ route('user.dashboard') }}" class="text-sm text-gray-700 underline">Pagina inicial</a>
+                            <a href="{{ route('user.dashboard') }}" class="text-sm text-gray-700 underline">Entrar</a>
                                                    
                         @endif
                     @else

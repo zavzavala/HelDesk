@@ -1,11 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChamadoController;
 use App\Http\Controllers\ChartController;
+use App\Http\Controllers\HistoricoModelController;
 use App\Http\Controllers\CalendarioController;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,6 +26,17 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return view('welcome');
 });
+ //Route::get('/commands/{db:backup}', function ($command) {
+  //Artisan::call($command);
+  //return "Backup do Banco Feito Com Sucesso.";
+    //return artisan::output();
+ //})->name('commands/db:backup');
+
+Route::get('backup', function(){
+
+    Artisan::call('db:backup');
+    return "Backup do Banco Feito Com Sucesso.";
+})->name('commands/db:backup');
 
 Route::middleware(['middleware'=>'PreventBackHistory'])->group(function () {
     Auth::routes();
@@ -33,11 +45,13 @@ Route::middleware(['middleware'=>'PreventBackHistory'])->group(function () {
 
 //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-
+Route::group(['prefix'=>'master', 'middleware'=>['isMaster','auth', 'PreventBackHistory']], function(){
+    Route::get('settings',[AdminController::class,'settings'])->name('master.settings');
+});
 Route::group(['prefix'=>'admin', 'middleware'=>['isAdmin','auth','PreventBackHistory']], function(){
         Route::get('dashboard',[AdminController::class,'index'])->name('admin.dashboard');
         Route::get('profile',[AdminController::class,'profile'])->name('admin.profile');
-        Route::get('settings',[AdminController::class,'settings'])->name('admin.settings');
+        //Route::get('settings',[AdminController::class,'settings'])->name('admin.settings');
         Route::get('uplot',[ChartController::class,'uplot'])->name('admin.uplot');
       
         Route::get('flot',[AdminController::class,'flot'])->name('admin.flot');
@@ -72,11 +86,24 @@ Route::get('/getAdminChamadosList',[ChamadoController::class, 'getAdminChamadosL
 Route::get('/getAdminChamadosListPendentes',[ChamadoController::class, 'getAdminChamadosListPendentes'])->name('get.AdminchamadosPendentes.list');
 
 Route::get('/getAdminChamadosListResolvidos',[ChamadoController::class, 'getAdminChamadosListResolvidos'])->name('get.AdminchamadosResolvidos.list');
+
+Route::post('/AdmindeleteChamado',[ChamadoController::class,'AdmindeleteChamado'])->name('Admindelete.chamado');
+
+Route::post('/AdmindeleteSelectedChamados',[ChamadoController::class,'AdmindeleteSelectedChamados'])->name('Admindelete.selected.chamados');
+
+Route::get('/getHistoricoList',[HistoricoModelController::class, 'getHistoricoList'])->name('get.historico.list');
+Route::post('/deleteHistorico',[HistoricoModelController::class,'deleteHistorico'])->name('delete.historico');
+
+Route::post('/TodosHistorico',[HistoricoModelController::class,'TodosHistorico'])->name('historico.selected.delete');
+
+
 ///////USUARIOS
-Route::get('/getUsers',[ChamadoController::class, 'getUsers'])->name('get.users.list');
+Route::get('/getUsers',[AdminController::class, 'getUsers'])->name('get.users.list');
 
-Route::post('/deleteUser',[UserController::class,'deleteUser'])->name('delete.user');
+Route::post('/deleteUser',[AdminController::class,'deleteUser'])->name('delete.user');
 
+Route::post('/getInfoAdminDetails',[AdminController::class, 'getInfoAdminDetails'])->name('get.adminPermissoes.details');
+Route::post('/updateInfoToADMIN',[AdminController::class, 'updateInfoToADMIN'])->name('update.UserPermissoes.details');
 
 Route::post('/getChamadoDetails',[ChamadoController::class, 'getChamadosDetails'])->name('get.chamados.details');
 Route::post('/updateChamadosDetails',[ChamadoController::class, 'updateChamadoDetails'])->name('update.chamado.details');
@@ -92,9 +119,9 @@ Route::post('/getDesfazerDetails',[ChamadoController::class, 'getDesfazerDetails
 
 Route::post('/desfazerrChamado',[ChamadoController::class,'desfazerChamado'])->name('desfazer.chamado.details');
 
-Route::post('/getSelectedChamadosDetails',[ChamadoController::class, 'getSelectedChamadosDetails'])->name('get.resolveTodos.details');
+//Route::post('/getSelectedChamadosDetails',[ChamadoController::class, 'getSelectedChamadosDetails'])->name('get.resolveTodos.details');
 
-Route::post('/resolverSelectedChamados',[ChamadoController::class,'resolverSelectedChamados'])->name('resolve.selected.chamados');
+//Route::post('/resolverSelectedChamados',[ChamadoController::class,'resolverSelectedChamados'])->name('resolve.selected.chamados');
 
 ////    CALENDARO
 Route::post('/AddEvento',[CalendarioController::class,'AddEvento'])->name('Add.calendario');

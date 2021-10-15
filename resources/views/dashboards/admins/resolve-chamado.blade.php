@@ -12,10 +12,17 @@
                  <form action="<?= route('resolve.chamado.details') ?>" method="POST" id="resolve">
                     @csrf
                      <input type="hidden" name="chamaid">
+                     <input type="hidden" name="userID" value="{{Auth::user()->id}}">
+                     <input type="hidden" name="userName" value="{{Auth::user()->name}}">
                                 <div class="form-group">
                                 
                                     <input type="hidden" class="form-control" value="resolvido" name="status">
                                     
+                                </div>
+                                <div class="form-group">
+                                    <label for="obs">Observacao</label>
+                                    <textarea class="form-control" name="observacao" id="obs" cols="20" rows="5"></textarea>
+                                    <span class="text-danger error-text observacao_error"></span>
                                 </div>
 
                                 <div class="form-group">

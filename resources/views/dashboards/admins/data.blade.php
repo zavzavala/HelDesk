@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Chamados Tecnicos</h1>
+              <h1>Todos Chamados Tecnicos</h1>
             </div>
             
           </div>
@@ -31,11 +31,12 @@
                     <tr>
                     <th><input type="checkbox" name="main_checkbox"><label></label></th>
                                       <th>#</th>
-                                      <th>Nome</th>
+                                      <th>Usuario</th>
                                       <th>Departamento</th>
                                       <th>Tipo</th>
                                       <th>Problema</th>
                                       <th>Data</th>
+                                      
                                       <th>Acoes <button class="btn btn-sm btn-danger d-none" id="deleteTodosBtn"></button></th>
                                 
                     </tr>

@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="author" content="Kodinger">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title>Login page</title>
+	<title>Login</title>
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="css/my-login.css">
 </head>
@@ -21,27 +21,20 @@
 							<form method="POST" class="my-login-validation" autocomplete="off" action="{{ route('login') }}">
                                 @csrf
 								<div class="form-group">
-									<label for="email">E-Mail Address</label>
-									<input id="email" type="email" class="form-control" name="email" value="" required autofocus placeholder="Enter email">
+									<label for="email">E-Mail</label>
+									<input id="email" type="email" class="form-control" name="email" value="" required autofocus placeholder="Introduza seu email">
                                     <span class="text-danger">@error('email'){{ $message }}@enderror</span>
 								</div>
 
 								<div class="form-group">
-									<label for="password">Password
-										<a href="{{route('password.request')}}" class="float-right">
-											Forgot Password?
-										</a>
+									<label for="password">palavra-passe
+										<!--<a href="{{route('password.request')}}" class="float-right">
+											Esqueceu a Password?
+										</a>-->
 									</label>
-									<input id="password" type="password" class="form-control" name="password" required data-eye placeholder="Enter password">
+									<input id="password" type="password" class="form-control" name="password" required data-eye placeholder="Introduza palavra-passe">
                                     <span class="text-danger">@error('password'){{ $message }}@enderror</span>
-								</div>
-
-								<div class="form-group">
-									<div class="custom-checkbox custom-control">
-										<input type="checkbox" name="remember" id="remember" class="custom-control-input">
-										<label for="remember" class="custom-control-label">Remeber Me</label>
-									</div>
-								</div>
+								</div>		
 
 								<div class="form-group m-0">
 									<button type="submit" class="btn btn-primary btn-block">
@@ -49,7 +42,7 @@
 									</button>
 								</div>
 								<div class="mt-4 text-center">
-									Don't have an account? <a href="{{route('register')}}">Create One</a>
+									Ainda nao esta cadastrado? <a href="{{route('register')}}">Cadastre-se aqui</a>
 								</div>
 							</form>
 						</div>
