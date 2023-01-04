@@ -69,7 +69,7 @@ class UserController extends Controller
          if(!$query){
              return response()->json(['status'=>0,'msg'=>'Ocorreu um erro.']);
          }else{
-             return response()->json(['status'=>1,'msg'=>'Seu perfil foi atualizado com sucesso.']);
+             return response()->json(['status'=>1,'msg'=>'Seu perfil foi actualizado com sucesso.']);
          }
     }
 }

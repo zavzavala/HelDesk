@@ -45,9 +45,13 @@
                                     <input type="hidden" class="form-control" value="{{Auth::user()->departamento}}" name="departamento">
                                     
                                 </div>
-                               <div class="form-group">
-                                    
+                               <div class="form-group">                 
                                     <input type="hidden" class="form-control" value="pendente" name="status">
+                                    
+                                </div>
+                                <div class="form-group">
+                                    
+                                    <input type="hidden" class="form-control" value="0" name="satisfacao">
                                     
                                 </div>
                                 
@@ -69,7 +73,7 @@
                                         <option value="Impressora">Impressora</option>
                                         <option value="Internet">Internet</option>
                                         <option value="Outro">Outro</option>
-                                        </select>
+                                    </select>
                                     <span class="text-danger error-text tipo_error"></span>
                                 </div>
                                 <div class="form-group">

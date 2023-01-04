@@ -131,6 +131,7 @@
     <div class="content-wrapper">
     @yield('content')
     @include('dashboards.users.editar-chamado')
+    @include('dashboards.users.satisfacao')
     </div>
     <!-- /.content-wrapper -->
 
@@ -295,6 +296,53 @@ $(document).on('click','#editChamadoBtn', function(){
   },'json');
 });
 
+//SATISFACAO DO USUARIO
+$(document).on('click','#satisfeito', function(){
+  var chamado_id = $(this).data('id');
+  $('.satisfeito').find('form')[0].reset();
+  $('.satisfeito').find('span.error-text').text('');
+  $.post('<?= route("get.chamados.details") ?>',{chamado_id:chamado_id}, function(data){
+      //alert(data.details.nome);
+      $('.satisfeito').find('input[name="chamaid"]').val(data.details.id);
+      //$('.satisfacao').find('input[name="id_user"]').val(data.details.id_user);
+      $('.satisfeito').find('input[name="satisfacao"]');
+      $('.satisfeito').modal('show');
+  },'json');
+});
+
+//SATISFEITO
+$('#satisfeito-form').on('submit', function(e){
+  e.preventDefault();
+  var form = this;
+  $.ajax({
+      url:$(form).attr('action'),
+      method:$(form).attr('method'),
+      data:new FormData(form),
+      processData:false,
+      dataType:'json',
+      contentType:false,
+      beforeSend: function(){
+          $(form).find('span.error-text').text('');
+        //  var token = $('meta[name="csrf_token"]').attr('content');
+
+           // if (token) {
+                 //return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+           // }
+      },
+      success: function(data){
+            if(data.code == 0){
+                $.each(data.error, function(prefix, val){
+                  $(form).find('span.'+prefix+'_error').text(val[0]);
+                });
+            }else{
+                $('#chamado-table').DataTable().ajax.reload(null, false);
+                $('.satisfeito').modal('hide');
+                $('.satisfeito').find('form')[0].reset();
+                toastr.success(data.msg);
+            }
+      }
+  });
+});
 //UPDATE CHAMDOS DETAILS
 $('#update-form').on('submit', function(e){
   e.preventDefault();

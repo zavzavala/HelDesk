@@ -23,7 +23,7 @@ class chamados extends Migration
             $table->string('nome');
             $table->string('tipo');
             $table->string('problema');
-            //$table->string('observacao');
+            $table->string('satisfacao')->nullable();
             $table->timestamps();
         });
     }

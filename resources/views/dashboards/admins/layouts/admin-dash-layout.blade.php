@@ -224,7 +224,16 @@ google.charts.load("current", {packages:["corechart"]});
               <img src="{{ Auth::user()->picture }}" class="img-circle elevation-2 admin_picture" alt="User Image">
             </div>
             <div class="info">
-              <a href="#" class="d-block admin_name">{{ Auth::user()->name }}</a>
+              <a href="#" class="d-block admin_name">
+                
+              @if( Auth::user()->email == 'admin@gmail.com' && Auth::user()->role == 1)
+                  {{ Auth::user()->name }}-MESTRE
+              @else
+                {{ Auth::user()->name }}
+
+              
+                @endif
+              </a>
             </div>
           </div>
 
@@ -381,7 +390,7 @@ google.charts.load("current", {packages:["corechart"]});
     <script src="{{ asset('dist/js/demo.js')}}"></script><!---ESTE E PARA SIDEBAR A DIREITA COM AS DEVIDAS PROPRIEDADES--->
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <!--<script src="{{ asset('dist/js/pages/dashboard3.js')}}"></script>
-    <!-- FLOT CHARTS -->
+    <!- FLOT CHARTS -->
     <script src="{{ asset('plugins/flot/jquery.flot.js')}}"></script>
     <!-- FLOT RESIZE PLUGIN - allows the chart to redraw when the window is resized -->
     <script src="{{ asset('plugins/flot/plugins/jquery.flot.resize.js')}}"></script>
@@ -533,7 +542,8 @@ $('#usuarios').DataTable({
       "pageLength":5,
       "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"Todos"]],
       columns:[
-          {data:'id_Rchamados', name:'id_Rchamados'},
+         // {data:'id_Rchamados', name:'id_Rchamados'},
+         {data:'id', name:'id'},
           {data:'checkbox', name:'checkbox', orderable:false, searchable:false},
          // {data:'DT_RowIndex', name:'DT_RowIndex'},
           {data:'nome', name:'nome'},
@@ -552,7 +562,7 @@ $('#usuarios').DataTable({
       $.post('<?= route("get.resolver.details") ?>',{chamado_id:chamado_id}, function(data){
           //  alert(data.details.nome);
           $('.ResolveChamado').find('input[name="chamaid"]').val(data.details.id);
-          //$('.ResolveChamado').find('input[name="userID"]').val(data.details.userID);
+          $('.ResolveChamado').find('input[name="satisfacao"]').val(data.details.satisfacao);
          // $('.ResolveChamado').find('input[name="userName"]').val(data.details.userName);
           $('.ResolveChamado').find('input[name="status"]');
           $('.ResolveChamado').find('textarea[name="observacao"]').val(data.details.observacao);
@@ -599,7 +609,7 @@ $('#usuarios').DataTable({
       "pageLength":5,
       "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"Todos"]],
       columns:[
-           {data:'id_Rchamados', name:'id_Rchamados'},
+           {data:'id', name:'id'},
           //{data:'checkbox', name:'checkbox', orderable:false, searchable:false},
           //{data:'DT_RowIndex', name:'DT_RowIndex'},
           {data:'nome', name:'nome'},

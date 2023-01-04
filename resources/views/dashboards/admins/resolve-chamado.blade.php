@@ -12,11 +12,13 @@
                  <form action="<?= route('resolve.chamado.details') ?>" method="POST" id="resolve">
                     @csrf
                      <input type="hidden" name="chamaid">
+                    <input type="text" name="satisfacao" value="{{Auth::user()->satisfacao}}"> 
+                    <!-- <input type="text" name="status" value="{{Auth::user()->status}}"> -->
                      <input type="hidden" name="userID" value="{{Auth::user()->id}}">
                      <input type="hidden" name="userName" value="{{Auth::user()->name}}">
                                 <div class="form-group">
                                 
-                                    <input type="hidden" class="form-control" value="resolvido" name="status">
+                                     <input type="text" class="form-control" value="resolvido" name="status">
                                     
                                 </div>
                                 <div class="form-group">

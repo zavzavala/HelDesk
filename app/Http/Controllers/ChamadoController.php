@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Auth;
                 'tipo'=>'required',
                 'departamento'=>'required',
                 'problema'=>'required',
-                //'observacao'=>'required',
+                'satisfacao'=>'required',
             ],
             [
 
@@ -56,7 +56,7 @@ use Illuminate\Support\Facades\Auth;
                 $chamado->status = $request->status;
                 $chamado->data = $request->data;
                 $chamado->problema = $request->problema;
-                //$chamado->observacao = $request->observacao;
+                $chamado->satisfacao = $request->satisfacao;
                 
                 $query = $chamado->save();
 
@@ -81,7 +81,9 @@ use Illuminate\Support\Facades\Auth;
                                     return '<div class="btn-group">
                                                    <button class="btn btn-sm btn-primary" data-id="'.$row['id'].'" id="editChamadoBtn">Atualizar</button>
                                                     <button class="btn btn-sm btn-danger" data-id="'.$row['id'].'" id="deleteChamadoBtn">Cancelar</button>
-                                            </div>';
+                                                    <button class="btn btn-sm btn-success" data-id="'.$row['id'].'" id="satisfeito">Satisfeito</button>
+                                                
+                                                    </div>';
                                 })
                                 ->addColumn('checkbox', function($row){
                                     return '<input type="checkbox" name="chamado_checkbox" data-id="'.$row['id'].'"><label></label>';
@@ -95,7 +97,8 @@ use Illuminate\Support\Facades\Auth;
         // GET ALL CHAMADOS FOR TABLE
         public function getAdminChamadosList(){
           //$chamados=chamado::with('user');
-         $chamados = resolve_chamados::all();
+       //$chamados = resolve_chamados::all(); //chamados resolvidos
+       $chamados = chamado::all(); // pendentes
 //$chamados=DB::select(DB::raw("select nome, departamento, tipo, problema, STATUS, data from chamados inner join users on chamados.id_user=users.id"));
 //$chamados=DB::select(DB::raw("select * from chamados"));
     
@@ -120,8 +123,8 @@ use Illuminate\Support\Facades\Auth;
 
     // GET ALL CHAMADOS FOR TABLE PENDENTES
     public function getAdminChamadosListPendentes(){
-        $chamados = resolve_chamados::where(['status'=>'pendente']);
-       
+        //$chamados = resolve_chamados::where(['status'=>'pendente']);
+       $chamados = chamado::where(['status'=>'pendente']);
       // $chamados=DB::select(DB::raw("select * from chamados inner join users on users.id=chamados.id_user where chamados.status='pendente'"));
         
         return DataTables::of($chamados)
@@ -189,11 +192,43 @@ use Illuminate\Support\Facades\Auth;
                 
                 $chamado->tipo = $request->tipo;
                 $chamado->problema = $request->problema;
-            
+                $chamado->updated_at = \Carbon\Carbon::now();
+                
                 $resultado = $chamado->save();
 
                 if($resultado){
                     return response()->json(['code'=>1, 'msg'=>'Atualizado com sucesso']);
+                }else{
+                    return response()->json(['code'=>0, 'msg'=>'Ocorreu um erro']);
+                }
+            }
+        }
+                ///Satisfacao Chamados
+        public function Satisfacao(Request $request){
+            $chamado_id = $request->chamaid;
+
+            $validator = \Validator::make($request->all(),[
+                //'id'=>'required:chamados, id,'.$chamado_id,
+                'satisfacao'=> 'required:chamados, satisfacao,'.$chamado_id,
+                'satisfacao'=>'required'
+            ],
+            [
+                'satisfacao.required'=>'Campo vazio.',
+            ]);
+
+            if(!$validator->passes()){
+                return response()->json(['code'=>0, 'error'=>$validator->errors()->toArray()]);
+
+            }else{
+                $chamado = chamado::find($chamado_id);
+
+                $chamado->satisfacao = $request->satisfacao;
+               
+                $resultado = $chamado->save();
+
+                if($resultado){
+                    return response()->json(['code'=>1, 'msg'=>'Com sucesso.']);
+                
                 }else{
                     return response()->json(['code'=>0, 'msg'=>'Ocorreu um erro']);
                 }
@@ -239,13 +274,15 @@ use Illuminate\Support\Facades\Auth;
     //GET CHAMADOS RESOLVER DETAILS
     public function getResolverDetails(Request $request){
         $chamado_id = $request->chamado_id;
-        $chamadoDetails = resolve_chamados::find($chamado_id);
+        //$chamadoDetails = resolve_chamados::find($chamado_id);
+        $chamadoDetails = chamado::find($chamado_id);
         return response()->json(['details'=>$chamadoDetails]);
     }
 
     //UPDATE CHAMADOS RESOLVER DETAILS
     public function resolverChamado(Request $request){
         $chamado_id = $request->chamaid;
+        $satisfacao = $request->satisfacao;
 
         $validator = \Validator::make($request->all(),[
         // 'id'=>'unique:chamados, id,' .$chamado_id,
@@ -259,18 +296,21 @@ use Illuminate\Support\Facades\Auth;
             //'observacao.min'=>'Texto muito curto. Tem que inserir pelomenos 10 caracteres'
 
         ]);
-
-        if(!$validator->passes()){
+        
+        if($satisfacao == '0'){ return response()->json(['msg'=>"Este problema ainda nao foi resolvido."]);}else{
+       
+            if(!$validator->passes()){
             return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
         }else{
             
-            $chamado = resolve_chamados::find($chamado_id);
+           $chamado = resolve_chamados::find($chamado_id);
+           
+            //$chamado = chamado::find($chamado_id);
             $chamado->userID = $request->userID;
             $chamado->userName = $request->userName;
             $chamado->observacao= $request->observacao;
             $chamado->status = $request->status;
             
-
             $resultado = $chamado->save();
 
             if($resultado){
@@ -279,6 +319,8 @@ use Illuminate\Support\Facades\Auth;
                 return response()->json(['code'=>0, 'msg'=>'Ocorreu um erro']);
             }
         }
+   }
+
     }
 
     ///////////////////////////////
@@ -317,6 +359,7 @@ use Illuminate\Support\Facades\Auth;
             $chamado->userID = $request->userID;
             $chamado->userName = $request->userName;
             $chamado->status = $request->status;
+            $chamado->created_at = \Carbon\Carbon::now();
 
             $resultado = $chamado->save();
 

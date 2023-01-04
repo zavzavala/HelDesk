@@ -16,6 +16,7 @@ class isUserMiddleware
      * @param  \Closure  $next
      * @return mixed
      */
+    ////////////////USUARIOS SIMPLES
     public function handle(Request $request, Closure $next)
     {
         if( Auth::check() && Auth::user()->role == 2){

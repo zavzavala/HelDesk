@@ -30,10 +30,10 @@ class LoginController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
       protected function redirectTo(){
-          if( Auth()->user()->role == 3){
+          /* if( Auth()->user()->role == 3){
               return route('admin.dashboard');
-          }
-          elseif( Auth()->user()->role == 1){
+          } */
+          if( Auth()->user()->role == 1){
             return route('admin.dashboard');
         }
           elseif( Auth()->user() == 2){
@@ -72,7 +72,7 @@ class LoginController extends Controller
         }
 
        }else{
-           return redirect()->route('login')->with('error','Email and password are wrong');
+           return redirect()->route('login')->with('error','O email e a palavra-passe estao incorrectos.');
        }
     }
 }

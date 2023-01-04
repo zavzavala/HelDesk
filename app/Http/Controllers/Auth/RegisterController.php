@@ -109,9 +109,9 @@ class RegisterController extends Controller
 
          if( $user->save() ){
 
-            return redirect()->back()->with('success','Cadastrado com sucesso');
+            return redirect()->back()->with('success','Cadastrado com sucesso.');
          }else{
-             return redirect()->back()->with('error','Falha ao tenatr cadastrar');
+             return redirect()->back()->with('error','Falha ao tenatr cadastrar usuario.');
          }
 
     }

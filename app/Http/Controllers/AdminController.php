@@ -28,7 +28,7 @@ namespace App\Http\Controllers;
            $chamados=DB::select(DB::raw("select * from resolve_chamados where status='pendente' "));
   
            
-                $cont=DB::select(DB::raw("select count(*) as total from resolve_chamados where YEAR(data)=YEAR(NOW()) AND MONTH(data) = MONTH(NOW()) AND status='pendente'"));
+         $cont=DB::select(DB::raw("select count(*) as total from resolve_chamados where YEAR(data)=YEAR(NOW()) AND MONTH(data) = MONTH(NOW()) AND status='pendente'"));
 
             $resolvidos=DB::select(DB::raw("select count(*) as total from resolve_chamados where status='resolvido'"));
 
@@ -306,7 +306,7 @@ namespace App\Http\Controllers;
                         if(!$query){
                             return response()->json(['status'=>0,'msg'=>'Ocorreu um erro.']);
                         }else{
-                            return response()->json(['status'=>1,'msg'=>'Seus dados foram atualizados com sucesso.']);
+                            return response()->json(['status'=>1,'msg'=>'Seus dados foram actualizados com sucesso.']);
                         }
                 }
         }
@@ -428,9 +428,7 @@ namespace App\Http\Controllers;
            
             'role'=> 'required:users,role,'.$id_user,
             'role'=>'required',
-            
-            
-        
+
         ]);
 
         if(!$validator->passes()){

@@ -107,6 +107,7 @@ Route::post('/updateInfoToADMIN',[AdminController::class, 'updateInfoToADMIN'])-
 
 Route::post('/getChamadoDetails',[ChamadoController::class, 'getChamadosDetails'])->name('get.chamados.details');
 Route::post('/updateChamadosDetails',[ChamadoController::class, 'updateChamadoDetails'])->name('update.chamado.details');
+Route::post('/satisfacaoChamados', [ChamadoController::class, 'Satisfacao'])->name('satisfacao.cliente');
 Route::post('/deleteChamado',[ChamadoController::class,'deleteChamado'])->name('delete.chamado');
 
 Route::post('/deleteSelectedChamados',[ChamadoController::class,'deleteSelectedChamados'])->name('delete.selected.chamados');

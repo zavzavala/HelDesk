@@ -16,6 +16,7 @@ class isAdminMiddleware
      * @param  \Closure  $next
      * @return mixed
      */
+    ///////////ADMINISTRADOR
     public function handle(Request $request, Closure $next)
     {
         if( Auth::check() && Auth::user()->role == 1){
