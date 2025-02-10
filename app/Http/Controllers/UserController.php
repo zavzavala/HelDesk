@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use App\Models\chamado;
 use App\Models\User;
 use App\Models\ModelCalendario;
 use DB;
+use App\Models\Membro;
 use DataTables;
 
 class UserController extends Controller
@@ -18,11 +19,8 @@ class UserController extends Controller
     }
    function index(){
    
-
-    //dd($chamados=chamado::all());
-   // $chamados=chamado::all();
-  // ($chamados=chamado::all());
-    return view('dashboards.users.index');
+    $membros = Membro::all();
+    return view('dashboards.users.index', compact('membros'));
    }
 
    function profile(){
@@ -74,35 +72,37 @@ class UserController extends Controller
     }
 }
 
-function UserUpdatePicture(Request $request){
-$path = 'users/images/';
-$file = $request->file('user_image');
-$new_name = 'UIMG_'.date('Ymd').uniqid().'.jpg';
+    function UserUpdatePicture(Request $request){
+        $path = 'users/images/';
+        $file = $request->file('user_image');
+        $new_name = 'UIMG_'.date('Ymd').uniqid().'.jpg';
 
-//Upload new image
-$upload = $file->move(public_path($path), $new_name);
+        //Upload new image
+        $upload = $file->move(public_path($path), $new_name);
 
-if( !$upload ){
-    return response()->json(['status'=>0,'msg'=>'Ocorreu um erro ao tentar carregar nova foto.']);
-}else{
-    //Get Old picture
-    $oldPicture = User::find(Auth::user()->id)->getAttributes()['picture'];
+        if( !$upload ){
+            return response()->json(['status'=>0,'msg'=>'Ocorreu um erro ao tentar carregar nova foto.']);
+        }else{
+            //Get Old picture
+            $oldPicture = User::find(Auth::user()->id)->getAttributes()['picture'];
 
-    if( $oldPicture != '' ){
-        if( \File::exists(public_path($path.$oldPicture))){
-            \File::delete(public_path($path.$oldPicture));
+            if( $oldPicture != '' ){
+                if( \File::exists(public_path($path.$oldPicture))){
+                    \File::delete(public_path($path.$oldPicture));
+                }
+            }
+
+            //Update DB
+            $update = User::find(Auth::user()->id)->update(['picture'=>$new_name]);
+
+            if( !$upload ){
+                return response()->json(['status'=>0,'msg'=>'Ocorreu um erro ao tentar atualizar foto.']);
+            }else{
+                return response()->json(['status'=>1,'msg'=>'Seu perfil foi atualizado com sucesso.']);
+            }
+
         }
-    }
 
-    //Update DB
-    $update = User::find(Auth::user()->id)->update(['picture'=>$new_name]);
-
-    if( !$upload ){
-        return response()->json(['status'=>0,'msg'=>'Ocorreu um erro ao tentar atualizar foto.']);
-    }else{
-        return response()->json(['status'=>1,'msg'=>'Seu perfil foi atualizado com sucesso.']);
     }
-}
-}
 
 }

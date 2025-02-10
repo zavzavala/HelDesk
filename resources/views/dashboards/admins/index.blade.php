@@ -8,7 +8,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Chamados Tecnicos Pendentes</h1>
+            <h1>Membros</h1>
           </div>
           
         </div>
@@ -26,17 +26,22 @@
             
               <!-- /.card-header -->
               <div class="card-body">
-                <table class="table table-hover table-condensed" id="chamado-pendente">
+                <table class="table table-hover table-condensed" id="membros">
                   <thead>
                   <tr>
-                  <th><input type="checkbox" name="main_checkbox"><label></label></th>
-                                    <th>#</th>
-                                    <th>Usuario</th>  
-                                    <th>Departamento</th>   
-                                    <th>T.Problema</th>
-                                    <th>Problema</th>
-                                    <th>Data</th>
-                                    <th>Acoes <button class="btn btn-sm btn-danger d-none" id="resolveTodosBtn"></button></th>
+                    <th>Nome</th>  
+                    <th>Apelido</th>
+                    <th>Sexo</th>
+                    <th>Profissão</th>
+                    <th>Habilitações Literárias</th>
+                    <th>Nr. Cartõo membro</th>
+                    <th>Data Emissão</th>
+                    <th>Situação Membro</th>
+                    <th>Função</th>
+                    <th>celula</th>
+                    <th>Data de ingresso</th>
+                
+                    <th>Acões </th>
                                
                   </tr>
                   </thead>

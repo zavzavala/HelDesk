@@ -38,28 +38,28 @@
     </script>
     
     <script>
-google.charts.load("current", {packages:["corechart"]});
+      google.charts.load("current", {packages:["corechart"]});
         google.charts.setOnLoadCallback(drawChart);
         
       ////LINHAS
-  function drawChart() {
-          var data = google.visualization.arrayToDataTable([
-            ['Chamado', 'Dia'],
-            
-            <?php echo $chartData;?>
-          ]);
-
-          var options = {
-            title: 'Chamados Tecnicos',
-            //pieHole: 0.4,
-            is3D: true,
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Chamado', 'Dia'],
           
-          };
+          <?php echo $chartData;?>
+        ]);
 
-          var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        var options = {
+          title: 'Chamados Tecnicos',
+          //pieHole: 0.4,
+          is3D: true,
+        
+        };
 
-          chart.draw(data, options);
-        }
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
     </script>
     <script>
       google.charts.load("current", {packages:["corechart"]});
@@ -169,29 +169,7 @@ google.charts.load("current", {packages:["corechart"]});
             </div>
           </li>
           <!-- Notifications Dropdown Menu -->
-          <li class="nav-item dropdown"> 
           
-            <a class="nav-link" data-toggle="dropdown" href="#">
-              <i class="far fa-bell"></i>
-              <span class="badge badge-warning navbar-badge">@foreach($cont as $total){{$total->total}}@endforeach</span>
-            </a>
-          
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-            @foreach($chamados as $chamado)
-            <a href="#" class="dropdown-item">
-            <div class="dropdown-divider"></div>
-              <span class="dropdown-item dropdown-header">{{$chamado->nome}},{{$chamado->departamento}}</span>
-              
-              
-                <i class="fas fa-envelope mr-2"></i> {{$chamado->problema}}
-                <span class="float-right text-muted text-sm">{{$chamado->data}}</span>
-              </a>
-              @endforeach
-          
-              <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item dropdown-footer">Ver todas notificacoes</a>
-            </div>
-          </li>
           
           <li class="nav-item">
             <a class="nav-link" data-widget="fullscreen" href="" role="button">
@@ -227,12 +205,12 @@ google.charts.load("current", {packages:["corechart"]});
               <a href="#" class="d-block admin_name">
                 
               @if( Auth::user()->email == 'admin@gmail.com' && Auth::user()->role == 1)
-                  {{ Auth::user()->name }}-MESTRE
+                  {{ Auth::user()->name }}
               @else
                 {{ Auth::user()->name }}
 
               
-                @endif
+              @endif
               </a>
             </div>
           </div>
@@ -243,20 +221,20 @@ google.charts.load("current", {packages:["corechart"]});
             <ul class="nav nav-pills nav-sidebar flex-column nav-legacy nav-compact nav-child-indent nav-collapse-hide-child nav-flat" data-widget="treeview" role="menu" data-accordion="false">
               <!-- Add icons to the links using the .nav-icon class
                   with font-awesome or any other icon font library -->
-                  <li class="nav-item">
-                    <a href="{{ route('admin.dashboard')}}" class="nav-link {{ (request()->is('user/dashboard*')) ? 'active' : '' }}">
-                      <i class="nav-icon fas fa-home"></i>
-                      <p>
-                        Dashboard
-                      </p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
+              <li class="nav-item">
+                <a href="{{ route('admin.dashboard')}}" class="nav-link {{ (request()->is('user/dashboard*')) ? 'active' : '' }}">
+                  <i class="nav-icon fas fa-home"></i>
+                  <p>
+                    Dashboard
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="{{ route('admin.widgets')}}" class="nav-link {{(request()->is('admin/widgets*') ? 'active' : '')}}">
                   <i class="nav-icon fas fa-th"></i>
                   <p>
-                    Estatisticas
-                    <span class="right badge badge-danger">@foreach($resolvidos as $res) {{$res->total}} @endforeach</span>
+                    Membros
+                  
                   </p>
                 </a>
               </li>
@@ -268,9 +246,9 @@ google.charts.load("current", {packages:["corechart"]});
                     <i class="fas fa-angle-left right"></i>
                   </p>
                 </a>
-                <ul class="nav nav-treeview">
+                   <ul class="nav nav-treeview">
                   
-                  <li class="nav-item">
+                <li class="nav-item">
                     <a href="{{ route('admin.data')}}" class="nav-link {{(request()->is('admin/data*') ? 'active' : '')}}">
                       <i class="far fa-circle nav-icon"></i>
                       <p>Todos</p>
@@ -282,8 +260,8 @@ google.charts.load("current", {packages:["corechart"]});
                       <p>Resolvidos</p>
                     </a>
                   </li>
-    </ul>
-    <li class="nav-item">
+              </ul>
+              <li class="nav-item">
                 <a href="#" class="nav-link">
                   <i class="nav-icon fas fa-chart-pie"></i>
                   <p>
@@ -310,19 +288,19 @@ google.charts.load("current", {packages:["corechart"]});
                       <i class="far fa-circle nav-icon"></i>
                       <p>Departamentos</p>
                     </a>
-                  </li> 
+                  </li>  
                   
                 </ul>
               </li>
-
-                  <li class="nav-item">
-                    <a href="{{ route('admin.profile')}}" class="nav-link {{ (request()->is('admin/profile*') ? 'active' : '' )}}">
-                      <i class="nav-icon fas fa-user"></i>
-                      <p>
-                      Perfil
-                      </p>
-                    </a>
-                  </li>
+                
+              <li class="nav-item">
+                <a href="{{ route('admin.profile')}}" class="nav-link {{ (request()->is('admin/profile*') ? 'active' : '' )}}">
+                  <i class="nav-icon fas fa-user"></i>
+                  <p>
+                  Perfil
+                  </p>
+                </a>
+              </li>
                   
               <li class="nav-item">
                 <a href="{{ route('admin.calendar')}}" class="nav-link {{ (request()->is('admin/calendar*') ? 'active' : '' )}}">
@@ -338,7 +316,7 @@ google.charts.load("current", {packages:["corechart"]});
                 <a href="{{ route('master.settings')}}" class="nav-link {{ (request()->is('master/settings*') ? 'active' : '' )}}">
                   <i class="nav-icon fas fa-cog"></i>
                   <p>
-                  Definicoes
+                  Definições
                   </p>
                 </a>
               </li>
@@ -534,26 +512,74 @@ $('#usuarios').DataTable({
           }
       });
     });
-    //GET ALL CHAMADOS PENDENTES
-    $('#chamado-pendente').DataTable({
+
+    //MEMBROS
+    $('#membros').DataTable({
       processing:true,
       info:true,
-      ajax:"{{ route('get.AdminchamadosPendentes.list') }}",
+      ajax:"{{ route('allMembros') }}",
       "pageLength":5,
       "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"Todos"]],
       columns:[
-         // {data:'id_Rchamados', name:'id_Rchamados'},
-         {data:'id', name:'id'},
-          {data:'checkbox', name:'checkbox', orderable:false, searchable:false},
-         // {data:'DT_RowIndex', name:'DT_RowIndex'},
-          {data:'nome', name:'nome'},
-          {data:'departamento',name:'departamento'},
-          {data:'tipo', name:'tipo'},
-          {data:'problema', name:'problema'},
-          {data:'data', name:'data'},
-          {data:'acoes', name:'acoes', orderable:false, searchable:false},
+       
+        //{data:'DT_RowIndex', name:'DT_RowIndex'},
+        {data:'nome', name:'nome'},
+        {data:'apelido', name:'apelido'},
+        {data:'sexo', name:'sexo'},
+        {data:'profissao', name:'profissao'},
+        {data:'habilitacoes_literarias', name:'habilitacoes_literarias'},
+        {data:'numero', name:'numero'},
+        {data:'data_emissao', name:'data_emissao'},
+        {data:'situacao_membro', name:'situacao_membro'},
+        {data:'funcao_celula', name:'funcao_celula'},
+        {data:'celula', name:'celula'},
+        {data:'data_ingresso', name:'data_ingresso'},
+
+        {data:'acoes', name:'acoes', orderable:false, searchable:false},
+        
       ]
     });
+
+    $(document).on('click','#deleteMembroBtn', function(){
+      var membro_id = $(this).data('id');
+      //alert(membro_id);
+      var url = '<?= route("delete.membro") ?>';
+      
+      swal.fire({
+          title:'Atencao!',
+          html:'Deseja <b>Eliminar</b> este Membro?',
+          showCancelButton:true,
+          showCloseButton:true,
+          cancelButtonText:'Cancelar',
+          confirmButtonText:'Sim, Eliminar',
+          cancelButtonColor:'#d33',
+          confirmButtonColor:'#556ee6',
+          width:300,
+          allowOutsideClick:false
+      }).then(function(result){
+            if(result.value){
+                $.post(url,{membro_id:membro_id}, function(data){
+                    if(data.code == 1){
+                        $('#membros').DataTable().ajax.reload(null, false);
+                        toastr.success(data.msg);
+                    }else{
+                        toastr.error(data.msg);
+                    }
+                },'json');
+            }
+      });
+
+    });
+
+
+
+
+
+
+
+
+
+
 
     $(document).on('click','#resolveBtn', function(){
       var chamado_id = $(this).data('id');

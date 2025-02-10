@@ -22,7 +22,8 @@ use Illuminate\Support\Facades\Auth;
         }
 
         public function index(){
-            return view('index');
+            
+            return view('dashboards.users.index');
         }
 
         //ADD NEW CHAMADO
@@ -75,22 +76,23 @@ use Illuminate\Support\Facades\Auth;
             
          $chamados = chamado::where([ ['status','pendente'],['id_user',$id] ]);
           
-            return DataTables::of($chamados)
-                                ->addIndexColumn()
-                                ->addColumn('acoes', function($row){
-                                    return '<div class="btn-group">
-                                                   <button class="btn btn-sm btn-primary" data-id="'.$row['id'].'" id="editChamadoBtn">Atualizar</button>
-                                                    <button class="btn btn-sm btn-danger" data-id="'.$row['id'].'" id="deleteChamadoBtn">Cancelar</button>
-                                                    <button class="btn btn-sm btn-success" data-id="'.$row['id'].'" id="satisfeito">Satisfeito</button>
-                                                
-                                                    </div>';
-                                })
-                                ->addColumn('checkbox', function($row){
-                                    return '<input type="checkbox" name="chamado_checkbox" data-id="'.$row['id'].'"><label></label>';
-                                })
-                        
-                                ->rawColumns(['acoes','checkbox'])
-                                ->make(true);
+        return DataTables::of($chamados)
+            ->addIndexColumn()
+            ->addColumn('acoes', function($row){
+                return '<div class="btn-group">
+                                <button class="btn btn-sm btn-primary" data-id="'.$row['id'].'" id="editChamadoBtn">Atualizar</button>
+                                <button class="btn btn-sm btn-danger" data-id="'.$row['id'].'" id="deleteChamadoBtn">Cancelar</button>
+                                <button class="btn btn-sm btn-success" data-id="'.$row['id'].'" id="satisfeito">Satisfeito</button>
+                            
+                                </div>';
+            })
+            ->addColumn('checkbox', function($row){
+                return '<input type="checkbox" name="chamado_checkbox" data-id="'.$row['id'].'"><label></label>';
+            })
+    
+            ->rawColumns(['acoes','checkbox'])
+            ->make(true);
+
         }
     ///GET CHAMADOS FOR ADMINISTRATION
 

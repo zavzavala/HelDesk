@@ -22,10 +22,10 @@ class UserSeeder extends Seeder
         \DB::table('users')->insert([
             'name' => 'administrador',
             'email' => 'admin@gmail.com',
-            'role' => 2,
+            'role' => 1,
             'departamento' => 'TICS',
             'favoriteColor' => 'verde',
-            'password' => Hash::make('S$atela12'),
+            'password' => Hash::make('$Satela12'),
             'remember_token' => Str::random(10)
 
         ]);

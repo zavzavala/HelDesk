@@ -89,7 +89,7 @@ class RegisterController extends Controller
 
          /** Make avata */
 
-         $path = 'users/images/';
+         /* $path = 'users/images/';
          $fontPath = public_path('fonts/Oliciy.ttf');
          $char = strtoupper($request->name[0]);
          $newAvatarName = rand(12,34353).time().'_avatar.png';
@@ -97,14 +97,14 @@ class RegisterController extends Controller
 
          $createAvatar = makeAvatar($fontPath,$dest,$char);
          $picture = $createAvatar == true ? $newAvatarName : '';
-
+ */
          $user = new User();
          $user->name = $request->name;
          $user->email = $request->email;
          $user->role = 2;
          $user->favoriteColor = $request->favoriteColor;
          $user->departamento = $request->departamento;
-         $user->picture = $picture;
+         //$user->picture = $picture;
          $user->password = \Hash::make($request->password);
 
          if( $user->save() ){

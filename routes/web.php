@@ -8,6 +8,10 @@ use App\Http\Controllers\ChamadoController;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\HistoricoModelController;
 use App\Http\Controllers\CalendarioController;
+use App\Http\Controllers\MembroController;
+use App\Http\Controllers\CartaoMembroController;
+use App\Http\Controllers\MilitanciaController;
+use App\Models\Militancia;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -49,7 +53,10 @@ Route::group(['prefix'=>'master', 'middleware'=>['isMaster','auth', 'PreventBack
     Route::get('settings',[AdminController::class,'settings'])->name('master.settings');
 });
 Route::group(['prefix'=>'admin', 'middleware'=>['isAdmin','auth','PreventBackHistory']], function(){
+
         Route::get('dashboard',[AdminController::class,'index'])->name('admin.dashboard');
+
+
         Route::get('profile',[AdminController::class,'profile'])->name('admin.profile');
         //Route::get('settings',[AdminController::class,'settings'])->name('admin.settings');
         Route::get('uplot',[ChartController::class,'uplot'])->name('admin.uplot');
@@ -75,15 +82,60 @@ Route::group(['prefix'=>'user', 'middleware'=>['isUser','auth','PreventBackHisto
     Route::get('calendar',[UserController::class,'calendar'])->name('user.calendar');
     
     Route::post('update-profile-info',[UserController::class,'updateInfo'])->name('userUpdateInfo');
-        Route::post('change-profile-picture',[UserController::class,'UserUpdatePicture'])->name('userPictureUpdate');
-        //Route::post('change-password',[UserController::class,'changePassword'])->name('adminChangePassword');
+    Route::post('change-profile-picture',[UserController::class,'UserUpdatePicture'])->name('userPictureUpdate');
+    //Route::post('change-password',[UserController::class,'changePassword'])->name('adminChangePassword');
        
+    Route::get('adicionar-membros',[MembroController::class,'create'])->name('add-membro');
+    Route::get('membros',[MembroController::class,'index'])->name('get.membros');
+    Route::get('Lstamembros',[MembroController::class,'getMembro'])->name('getMembro');
+
+    Route::post('salvaMembro',[MembroController::class,'store'])->name('save-membro');
+    
+    Route::get('adicionar-cartao-membro',[CartaoMembroController::class,'create'])->name('add-cartao');
+    Route::get('cartao',[CartaoMembroController::class,'index'])->name('cartao');
+    Route::get('/Listacartao',[CartaoMembroController::class,'getCartao'])->name('getCartao');
+
+    Route::post('salvaCartao',[CartaoMembroController::class,'store'])->name('save-cartao');
+    
+    
+    Route::get('adicionar-militancia',[MilitanciaController::class,'create'])->name('add-militancia');
+    Route::get('militancia',[MilitanciaController::class,'index'])->name('militancia');
+    Route::get('ListaMilitancia',[MilitanciaController::class,'getMilitancia'])->name('getMilitancia');
+
+    Route::post('SalvaMilitancia',[MilitanciaController::class,'store'])->name('save-militancia');
+    
+    /* EDIT */
+
+    Route::post('/Editar-membro',[MembroController::class, 'MembrosDetalhes'])->name('membros.detalhes');
+    Route::post('/UpdateMembro',[MembroController::class, 'updateMembro'])->name('update-membro');
+
+    Route::post('/Editar-cartao',[CartaoMembroController::class, 'CartaoDetalhes'])->name('cartao.detalhes');
+    Route::post('/UpdateCartao',[CartaoMembroController::class, 'updateCartao'])->name('update-cartao');
+
+    Route::post('/Editar-militancia',[MilitanciaController::class, 'MilitanciaDetalhes'])->name('militancia.detalhes');
+    Route::post('/UpdateMilitancia',[MilitanciaController::class, 'updateMilitancia'])->name('update-militancia');
+
+    /* DROP */
+    Route::post('/ELiminar-militancia',[MilitanciaController::class,'destroy'])->name('delete.militancia');
+
+    Route::post('/ELiminar-cartao',[CartaoMembroController::class,'destroy'])->name('delete.cartao');
+
+    Route::post('/ELiminar-membro',[MembroController::class,'destroy'])->name('delete.membro');
+
+
 });
 Route::get('/chamado-list',[ChamadoController::class, 'index'])->name('chamado.list');
 Route::post('/add-chamado',[ChamadoController::class,'addChamado'])->name('add.chamado');
 Route::get('/getChamadosList',[ChamadoController::class, 'getChamadosList'])->name('get.chamados.list');
 Route::get('/getAdminChamadosList',[ChamadoController::class, 'getAdminChamadosList'])->name('get.Adminchamados.list');
+
 Route::get('/getAdminChamadosListPendentes',[ChamadoController::class, 'getAdminChamadosListPendentes'])->name('get.AdminchamadosPendentes.list');
+
+
+/* ADMIN */
+
+
+Route::get('/TdosMembros', [MembroController::class, 'getMembros'])->name('allMembros');
 
 Route::get('/getAdminChamadosListResolvidos',[ChamadoController::class, 'getAdminChamadosListResolvidos'])->name('get.AdminchamadosResolvidos.list');
 

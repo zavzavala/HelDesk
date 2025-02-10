@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
     use App\Models\User;
     use App\Models\chamado;
     use App\Models\resolve_chamados;
+    use App\Models\Membro;
     use DB;
     use DataTables;
 
@@ -14,25 +15,25 @@ namespace App\Http\Controllers;
     use Carbon\Carbon;
     class AdminController extends Controller
     {
-        function index(){
-            $users=user::paginate(4);
-           // $chamados=chamado::paginate(4);
-           //$chamados=chamado::with('User')
-          /* $chamados=chamado::with('user')
-           ->whereYear("data", date('Y'))
-           ->whereMonth("data", date('m'))
-           ->where('status', 'pendente')
-           ->limit('3')
-           ->get();*/
+        
+     function index(){
+
+        $users=user::paginate(4);
+         
+        $membro = DB::table('membros')
+            ->leftJoin('cartao_membros','membros.id', '=', 'cartao_membros.membro_id')
+                ->leftJoin('militancia','membros.id', '=', 'militancia.membro_id')
+                    ->select('membros.*','cartao_membros.data_emissao', 'cartao_membros.numero', 'militancia.data_ingresso', 'militancia.situacao_membro', 'militancia.funcao_celula', 'militancia.celula')
+                        ->get();
            
            $chamados=DB::select(DB::raw("select * from resolve_chamados where status='pendente' "));
   
            
          $cont=DB::select(DB::raw("select count(*) as total from resolve_chamados where YEAR(data)=YEAR(NOW()) AND MONTH(data) = MONTH(NOW()) AND status='pendente'"));
 
-            $resolvidos=DB::select(DB::raw("select count(*) as total from resolve_chamados where status='resolvido'"));
+            $resolvidos=DB::select(DB::raw("select count(*) as total from resolve_chamados where status='pendente'"));
 
-            $result=DB::select(DB::raw("select count(*) as total_chamado, tipo from resolve_chamados where status='resolvido' group by tipo"));
+            $result=DB::select(DB::raw("select count(*) as total_chamado, tipo from resolve_chamados where status='pendente' group by tipo"));
 
             $chartData="";
             foreach($result as $list){
@@ -42,7 +43,7 @@ namespace App\Http\Controllers;
            // dd($loop);
             return view('dashboards.admins.index',$loop, compact('users', 'chamados', 'cont', 'resolvidos'));
         }
-        
+         
         function profile(){
             $users=user::paginate(4);
             //$chamados=chamado::paginate(4);
@@ -130,78 +131,7 @@ namespace App\Http\Controllers;
         }
 
 
-        function data(){
-            $users=user::paginate(4);
-            //$chamados=chamado::paginate(4)
-            $chamados=resolve_chamados::with('user')
-           ->whereYear("data", date('Y'))
-           ->whereMonth("data", date('m'))
-           ->where('status', 'pendente')
-           ->limit('3')
-           ->get();
-                //dd($chamados);
-               $cont=DB::select(DB::raw("select count(*) as total from resolve_chamados where YEAR(data)=YEAR(NOW()) AND MONTH(data) = MONTH(NOW()) AND status='pendente'"));
-
-
-            $resolvidos=DB::select(DB::raw("select count(*) as total from resolve_chamados where status='resolvido'"));
-
-            $result=DB::select(DB::raw("select count(*) as total_chamado, tipo from resolve_chamados where status='resolvido' group by tipo"));
-
-            $chartData="";
-            foreach($result as $list){
-                $chartData.="['".$list->tipo."', ".$list->total_chamado."],";
-            }
-            $loop['chartData']=rtrim($chartData, ",");
-           // dd($loop);
-            return view('dashboards.admins.data',$loop, compact('users', 'chamados', 'cont', 'resolvidos'));
-        }
-        function flot(){
-            $users=user::paginate(4);
-            //$chamados=chamado::paginate(4);
-            $chamados=resolve_chamados::with('user')
-           ->whereYear("data", date('Y'))
-           ->whereMonth("data", date('m'))
-           ->where('status', 'pendente')
-           ->limit('3')
-           ->get();
-           $cont=DB::select(DB::raw("select count(*) as total from resolve_chamados where YEAR(data)=YEAR(NOW()) AND MONTH(data) = MONTH(NOW()) AND status='pendente'"));
-
-            $resolvidos=DB::select(DB::raw("select count(*) as total from resolve_chamados where status='resolvido'"));
-
-            $result=DB::select(DB::raw("select count(*) as total_chamado, tipo from resolve_chamados where status='resolvido' group by tipo"));
-
-                $chartData="";
-                foreach($result as $list){
-                    $chartData.="['".$list->tipo."', ".$list->total_chamado."],";
-                }
-                $loop['chartData']=rtrim($chartData, ",");
-               //dd($loop);
-            return view('dashboards.admins.flot',$loop, compact('users', 'chamados', 'cont', 'resolvidos'));
-        }
-
-        function resolvidos(){
-            $users=user::paginate(4);
-            //$chamados=chamado::paginate(4);
-            $chamados=resolve_chamados::with('user')
-            ->whereYear("data", date('Y'))
-            ->whereMonth("data", date('m'))
-            ->where('status', 'pendente')
-            ->limit('3')
-            ->get();
-            $cont=DB::select(DB::raw("select count(*) as total from resolve_chamados where YEAR(data)=YEAR(NOW()) AND MONTH(data) = MONTH(NOW()) AND status='pendente'"));
- 
-             $resolvidos=DB::select(DB::raw("select count(*) as total from resolve_chamados where status='resolvido'"));
- 
-             $result=DB::select(DB::raw("select count(*) as total_chamado, tipo from resolve_chamados where status='resolvido' group by tipo"));
- 
-            $chartData="";
-            foreach($result as $list){
-                $chartData.="['".$list->tipo."', ".$list->total_chamado."],";
-            }
-            $loop['chartData']=rtrim($chartData, ",");
-           // dd($loop);
-        return view('dashboards.admins.resolvidos',$loop, compact('users', 'chamados', 'cont', 'resolvidos'));
-    }
+       
     function linhas(){
         $users=user::paginate(4);
        //$chamados=chamado::paginate(4);
@@ -215,11 +145,11 @@ namespace App\Http\Controllers;
 
         $resolvidos=DB::select(DB::raw("select count(*) as total from resolve_chamados where status='resolvido'"));
 
-        $result=DB::select(DB::raw("select count(*) as total_chamado, tipo from resolve_chamados where status='resolvido' group by tipo"));
+        $result=DB::select(DB::raw("select count(*) as total_chamado, situacao_membro from militancia where created_at = NULL group by situacao_membro"));
 
                 $chartData="";
                 foreach($result as $list){
-                    $chartData.="['".$list->tipo."', ".$list->total_chamado."],";
+                    $chartData.="['".$list->situacao_membro."', ".$list->total_chamado."],";
                 }
                 $loop['chartData']=rtrim($chartData, ",");
                //dd($loop);
@@ -235,11 +165,11 @@ namespace App\Http\Controllers;
        ->where('status', 'pendente')
        ->limit('3')
        ->get();
-       $cont=DB::select(DB::raw("select count(*) as total from resolve_chamados where YEAR(data)=YEAR(NOW()) AND MONTH(data) = MONTH(NOW()) AND status='pendente'"));
+       $cont=DB::select(DB::raw("select count(*) as total from chamados where YEAR(data)=YEAR(NOW()) AND MONTH(data) = MONTH(NOW()) AND status='pendente'"));
 
-        $resolvidos=DB::select(DB::raw("select count(*) as total from resolve_chamados where status='resolvido'"));
+        $resolvidos=DB::select(DB::raw("select count(*) as total from chamados where status='pendente'"));
 
-        $result=DB::select(DB::raw("select count(*) as total_chamado, tipo from resolve_chamados where status='resolvido' group by tipo"));
+        $result=DB::select(DB::raw("select count(*) as total_chamado, tipo from chamados where status='pendente' group by tipo"));
 
                 $chartData="";
                 foreach($result as $list){
@@ -252,19 +182,25 @@ namespace App\Http\Controllers;
     function widgets(){
         $users=user::paginate(4);
         //$chamados=chamado::paginate(4);
-        $chamados=resolve_chamados::with('user')
+        $chamados=chamado::with('user')
         ->whereYear("data", date('Y'))
         ->whereMonth("data", date('m'))
         ->where('status', 'pendente')
         ->limit('3')
         ->get();
-        $cont=DB::select(DB::raw("select count(*) as total from resolve_chamados where YEAR(data)=YEAR(NOW()) AND MONTH(data) = MONTH(NOW()) AND status='pendente'"));
 
-         $resolvidos=DB::select(DB::raw("select count(*) as total from resolve_chamados where status='resolvido'"));
+        $cont = Membro::count('*');
+  
+         $Total_membros=DB::select(DB::raw("select count(*) as total from membros")); //Total membros
 
-         $result=DB::select(DB::raw("select count(*) as total_chamado, tipo from resolve_chamados where status='resolvido' group by tipo"));
-         $widgets=DB::select(DB::raw("select count(*) as todos, tipo,status from `resolve_chamados` group by tipo, status"));
-        
+         $result=DB::select(DB::raw("select count(*) as total_chamado, tipo from chamados where status='pendente' group by tipo"));
+
+       
+         $widgets = DB::table('militancia')->select('situacao_membro', DB::raw('count(*) as total'))
+                        ->groupBy('situacao_membro')->get();
+                     //dd($membro);
+         //$membros=DB::select(DB::raw("select count(*) as todos, tipo,status from `chamados` group by tipo, status"));
+
                         $chartData="";
                         foreach($result as $list){
                             $chartData.="['".$list->tipo."', ".$list->total_chamado."],";
@@ -273,7 +209,7 @@ namespace App\Http\Controllers;
                        //dd($loop);
        //dd($widgets);
 
-        return view('dashboards.admins.widgets',$loop, compact('users', 'chamados', 'cont','widgets', 'resolvidos'));
+        return view('dashboards.admins.widgets',$loop, compact('users', 'chamados', 'cont','widgets', 'Total_membros'));
     }
 
         function updateInfo(Request $request){
@@ -434,23 +370,25 @@ namespace App\Http\Controllers;
         if(!$validator->passes()){
             return response()->json(['status'=>0,'error'=>$validator->errors()->toArray()]);
         }else{
-                $query = User::find($id_user)->update([
-                    'role'=>$request->role,
-                    //"role"=>json_encode($this->role),
-                ]);
-               /* $query = User::find($id_user);
 
-                $query-> role = $request->role;
+            $query = User::find($id_user)->update([
+                'role'=>$request->role,
+                //"role"=>json_encode($this->role),
+            ]);
+            /* $query = User::find($id_user);
 
-                $sucesso=$query->save();*/
+            $query-> role = $request->role;
+
+            $sucesso=$query->save();*/
 
 
-                if(!$query){
-                    return response()->json(['status'=>0,'msg'=>'Ocorreu um erro.']);
-                }else{
-                    return response()->json(['status'=>1,'msg'=>'Atualizado com sucesso.']);
-                }
+            if(!$query){
+                return response()->json(['status'=>0,'msg'=>'Ocorreu um erro.']);
+            }else{
+                return response()->json(['status'=>1,'msg'=>'Atualizado com sucesso.']);
+            }
+
         }
-}
-
     }
+
+}
